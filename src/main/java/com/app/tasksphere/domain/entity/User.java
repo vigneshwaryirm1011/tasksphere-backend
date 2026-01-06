@@ -1,10 +1,10 @@
 package com.app.tasksphere.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.app.tasksphere.domain.enums.UserRole;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -19,16 +19,25 @@ public class User {
     private String password;
     private boolean active;
 
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
     //External code can’t misuse
     protected User(){};
 
-    public User(Email email, String password, boolean active) {
-        this.email = email;
-        this.password = password;
+    // intent-based methods (so i can avoid null or bad inputs)
+    public User(Email email, String password, boolean active, UserRole newUserRole) {
+        this.email = Objects.requireNonNull(email);
+        this.password = Objects.requireNonNull(password);
+        this.role = Objects.requireNonNull(newUserRole);
         this.active = true;
     }
 
     public void deactivate(){
         this.active = false;
     }
+    public void changeRole(UserRole newUserRole){
+        this.role = Objects.requireNonNull(newUserRole);
+    }
+
 }
